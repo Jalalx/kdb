@@ -71,7 +71,7 @@ func main() {
 func processInput(args *InputArgs, db *sql.DB) {
 
 	if args.Version {
-		fmt.Printf("Version: %s, hash: %s\n", Version, GitHash)
+		fmt.Printf("Version: %s-%s\n", Version, GitHash)
 		os.Exit(0)
 	}
 
