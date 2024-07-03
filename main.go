@@ -17,7 +17,7 @@ const (
 	EMBEDDING_MODEL_NAME       = "nomic-embed-text"
 	EMBEDDING_MODEL_DIMENSIONS = 768
 	DATABASE_VENDOR            = "duckdb"
-	DATABASE_NAME              = "db/knowledgebase.ddb"
+	DATABASE_NAME              = "~/.kdb/knowledgebase.ddb"
 )
 
 func readStdInput() string {
@@ -31,6 +31,7 @@ func readStdInput() string {
 
 func main() {
 	var args InputArgs
+	MakeKdbDirIfNeeded()
 
 	// Initialize the database
 	db, err := Connect()
