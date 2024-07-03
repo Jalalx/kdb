@@ -26,7 +26,6 @@ func initDb(db *sql.DB) {
 		"INSTALL vss",
 		"LOAD vss",
 		"SET hnsw_enable_experimental_persistence=true;",
-		"SET log_query_path='logs/queries.log';",
 		fmt.Sprintf(`CREATE TABLE IF NOT EXISTS embeddings (
 			content TEXT NOT NULL,
 			vector FLOAT[%d],

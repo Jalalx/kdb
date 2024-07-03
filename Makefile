@@ -5,4 +5,4 @@ run:
 	go run *.go
 
 build:
-	go build -o kdb
+	go build -o bin/kdb
