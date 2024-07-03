@@ -20,6 +20,11 @@ const (
 	DATABASE_NAME              = "~/.kdb/knowledgebase.ddb"
 )
 
+var (
+	Version string
+	GitHash string
+)
+
 func readStdInput() string {
 	stdInputBytes, err := io.ReadAll(os.Stdin)
 	if err != nil {
@@ -54,7 +59,7 @@ func main() {
 	rootCmd.Flags().StringVarP(&args.Embed, "embed", "e", "", "Text to embed")
 	rootCmd.Flags().IntVarP(&args.List, "list", "l", 0, "List embedded texts")
 	rootCmd.Flags().IntVarP(&args.Top, "top", "t", 0, "Sets the max number of results to return for query")
-	rootCmd.Flags().BoolVarP(&args.Verbose, "verbose", "v", false, "Verbose output")
+	rootCmd.Flags().BoolVarP(&args.Version, "version", "v", false, "Prints the version")
 
 	// Execute the command
 	if err := rootCmd.Execute(); err != nil {
@@ -64,6 +69,11 @@ func main() {
 }
 
 func processInput(args *InputArgs, db *sql.DB) {
+
+	if args.Version {
+		fmt.Printf("Version: %s, hash: %s\n", Version, GitHash)
+		os.Exit(0)
+	}
 
 	embed := strings.TrimSpace(args.Embed)
 	if args.Stdin && embed != "" {

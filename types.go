@@ -1,7 +1,7 @@
 package main
 
 type InputArgs struct {
-	Verbose bool
+	Version bool
 	Embed   string
 	List    int
 	Query   string
