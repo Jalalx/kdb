@@ -86,12 +86,13 @@ func ListEmbeddings(limit int, db *sql.DB) {
 
 func FindNearestEmbeddings(vector []float64, top int, db *sql.DB) {
 	var (
-		content string
+		content  string
+		distance float64
 	)
 
 	// TODO: Use prepared statement when the support for arrays were added to duckdb
 	query := fmt.Sprintf(
-		"SELECT content FROM embeddings ORDER BY array_distance(vector, %s) LIMIT ?",
+		"SELECT content, array_distance(vector, %s) as distance FROM embeddings ORDER BY distance LIMIT ?",
 		stringifyWithType(vector))
 	rows, err := db.Query(query, top)
 
@@ -102,7 +103,8 @@ func FindNearestEmbeddings(vector []float64, top int, db *sql.DB) {
 	defer rows.Close()
 
 	for rows.Next() {
-		_ = rows.Scan(&content)
+		_ = rows.Scan(&content, &distance)
+		// Distance is not being used for now
 		fmt.Println(content)
 	}
 
