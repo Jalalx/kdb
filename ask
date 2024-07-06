@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Check if a question is provided as an argument
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 <question>"
+    exit 1
+fi
+
+# Language model to be used for answering the question
+MODEL="phi3"
+
+# The question passed as an argument
+QUESTION="$1"
+
+# The number of top answers in knowledge db
+TOP_ANSWERS=3
+
+# The given prompt
+PROMPT="Use the given context to answer the question. Don't do yapping. Also don't mention that you answer using the given context. If you don't know the answer according to the context, just say you don't know the answer. Do not make up answers. Context:\n"
+
+# Get the context from the kdb command-line app
+CONTEXT=$(kdb --query "$QUESTION" --top $TOP_ANSWERS)
+
+# Combine the prompt, context, and the question
+combined_input="${PROMPT}${CONTEXT}\n\nQuestion: ${QUESTION}"
+
+# Forward the combined input to ollama
+echo "$combined_input" | ollama run $MODEL
