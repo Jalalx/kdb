@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	CONTEXT_LENGTH             = 1024
+	CONTEXT_LENGTH             = 4000
 	EMBEDDING_MODEL_NAME       = "nomic-embed-text"
 	EMBEDDING_MODEL_DIMENSIONS = 768
 	DATABASE_VENDOR            = "duckdb"

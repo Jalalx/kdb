@@ -2,12 +2,12 @@
 
 # Check if a question is provided as an argument
 if [ $# -eq 0 ]; then
-    echo "Usage: $0 <question>"
+    echo "Usage: ask '<question>'"
     exit 1
 fi
 
 # Language model to be used for answering the question
-MODEL="phi3"
+MODEL="${KDB_INFERENCE_MODEL:-llama3}"
 
 # The question passed as an argument
 QUESTION="$1"

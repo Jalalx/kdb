@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Default database file
+DB_FILE="$HOME/.kdb/knowledgebase.ddb"
+DB_DIR=$(dirname "$DB_FILE")
+
+# Generate timestamp
+TIMESTAMP=$(date +"%Y-%m-%d-%H-%M-%S")
+
+# Function to check if a path is absolute
+is_absolute_path() {
+    case "$1" in
+        /*) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+# Determine the snapshot file path
+if [ "$1" == "--file" ] && [ -n "$2" ]; then
+    if is_absolute_path "$2"; then
+        SNAPSHOT_FILE="$2"
+    else
+        SNAPSHOT_FILE="$DB_DIR/$2"
+    fi
+else
+    SNAPSHOT_FILE="$DB_DIR/snapshot-${TIMESTAMP}.db"
+fi
+
+# Copy the database file
+cp "$DB_FILE" "$SNAPSHOT_FILE"
+
+echo "Snapshot created: $SNAPSHOT_FILE"

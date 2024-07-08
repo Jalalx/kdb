@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+    echo "Usage: learn '<article or note>'"
+    exit 1
+fi
+
+kdb --embed "$1"
+
+echo "Embedding was successful!"
