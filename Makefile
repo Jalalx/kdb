@@ -13,4 +13,5 @@ run:
 
 build:
 	mkdir -p bin/
+	cp -rf ask bin/ask
 	go build $(LDFLAGS) -o bin/kdb
