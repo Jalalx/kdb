@@ -10,7 +10,7 @@ import (
 	_ "github.com/marcboeker/go-duckdb"
 	"github.com/spf13/cobra"
 
-	"github.com/jalalx/kdb/database"
+	"github.com/jalalx/kdb/repos"
 )
 
 const (
@@ -37,7 +37,7 @@ func main() {
 	MakeKdbDirIfNeeded()
 
 	// Initialize the repo
-	repo, err := database.NewRepository()
+	repo, err := repos.NewRepository()
 	if err != nil {
 		panic(err)
 	}
@@ -77,7 +77,7 @@ func main() {
 	}
 }
 
-func processInput(args *InputArgs, repo database.EmbeddingRepo) {
+func processInput(args *InputArgs, repo repos.EmbeddingRepo) {
 
 	if args.Version {
 		fmt.Printf("Version: %s-%s\n", Version, GitHash)
@@ -129,7 +129,7 @@ func processInput(args *InputArgs, repo database.EmbeddingRepo) {
 	}
 }
 
-func performList(limit int, repo database.EmbeddingRepo) {
+func performList(limit int, repo repos.EmbeddingRepo) {
 	items, err := repo.List(limit)
 	if err != nil {
 		log.Fatalln(err)
@@ -140,7 +140,7 @@ func performList(limit int, repo database.EmbeddingRepo) {
 	}
 }
 
-func performQuery(query string, top int, repo database.EmbeddingRepo) {
+func performQuery(query string, top int, repo repos.EmbeddingRepo) {
 	eb, err := Embedd(query, EMBEDDING_MODEL_NAME)
 	if err != nil {
 		log.Fatalln(err)
@@ -156,7 +156,7 @@ func performQuery(query string, top int, repo database.EmbeddingRepo) {
 	}
 }
 
-func performInsert(content string, repo database.EmbeddingRepo) {
+func performInsert(content string, repo repos.EmbeddingRepo) {
 	eb, err := Embedd(content, EMBEDDING_MODEL_NAME)
 	if err != nil {
 		log.Fatalln(err)
