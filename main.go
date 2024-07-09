@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"io"
 	"log"
@@ -18,8 +17,6 @@ const (
 	CONTEXT_LENGTH             = 4000
 	EMBEDDING_MODEL_NAME       = "nomic-embed-text"
 	EMBEDDING_MODEL_DIMENSIONS = 768
-	DATABASE_VENDOR            = "duckdb"
-	DATABASE_NAME              = "~/.kdb/knowledgebase.ddb"
 )
 
 var (
@@ -37,22 +34,32 @@ func readStdInput() string {
 }
 
 func main() {
-	var args InputArgs
 	MakeKdbDirIfNeeded()
 
-	// Initialize the database
-	db, err := database.Connect(DATABASE_VENDOR, DATABASE_NAME, EMBEDDING_MODEL_DIMENSIONS)
+	// Initialize the repo
+	repo, err := database.NewRepository()
 	if err != nil {
 		panic(err)
 	}
 
-	defer db.Close()
+	defer repo.Close()
 
+	err = repo.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	err = repo.Init(EMBEDDING_MODEL_DIMENSIONS)
+	if err != nil {
+		panic(err)
+	}
+
+	var args InputArgs
 	var rootCmd = &cobra.Command{
 		Use:   "kdb",
 		Short: "A knowledge database available as a command line tool",
 		Run: func(cmd *cobra.Command, _ []string) {
-			processInput(&args, db)
+			processInput(&args, repo)
 		},
 	}
 
@@ -70,7 +77,7 @@ func main() {
 	}
 }
 
-func processInput(args *InputArgs, db *sql.DB) {
+func processInput(args *InputArgs, repo database.EmbeddingRepo) {
 
 	if args.Version {
 		fmt.Printf("Version: %s-%s\n", Version, GitHash)
@@ -109,23 +116,56 @@ func processInput(args *InputArgs, db *sql.DB) {
 	}
 
 	if args.Stdin {
-		stdin := readStdInput()
-		eb, err := Embedd(strings.TrimSpace(stdin), EMBEDDING_MODEL_NAME, db)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		database.InsertEmbedding(stdin, eb, db)
+		content := strings.TrimSpace(readStdInput())
+		performInsert(content, repo)
 	} else if embed != "" {
-		eb, err := Embedd(embed, EMBEDDING_MODEL_NAME, db)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		database.InsertEmbedding(embed, eb, db)
+		performInsert(embed, repo)
 	} else if query != "" {
-		Query(query, args.Top, db)
+		performQuery(query, args.Top, repo)
 	} else if args.List > 0 {
-		database.ListEmbeddings(args.List, db)
+		performList(args.List, repo)
 	} else {
 		fmt.Println("No action specified.")
 	}
+}
+
+func performList(limit int, repo database.EmbeddingRepo) {
+	items, err := repo.List(limit)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	for _, item := range items {
+		fmt.Printf("%s\t%s\t%s", item.Id, item.CreatedAt, item.Content)
+	}
+}
+
+func performQuery(query string, top int, repo database.EmbeddingRepo) {
+	eb, err := Embedd(query, EMBEDDING_MODEL_NAME)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	items, err := repo.Query(eb, top)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	for _, item := range items {
+		fmt.Println(item.Content)
+	}
+}
+
+func performInsert(content string, repo database.EmbeddingRepo) {
+	eb, err := Embedd(content, EMBEDDING_MODEL_NAME)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	result, err := repo.Insert(content, eb)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	fmt.Printf("Inserted item: %s\n", result.Id)
 }

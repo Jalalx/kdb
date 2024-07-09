@@ -3,10 +3,10 @@ module github.com/jalalx/kdb
 go 1.22.4
 
 require (
-	github.com/marcboeker/go-duckdb v1.7.0
-	github.com/xyproto/ollamaclient v1.9.3
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/marcboeker/go-duckdb v1.7.0
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/xyproto/ollamaclient v1.9.3
 )
 
 require (
@@ -26,3 +26,5 @@ require (
 	golang.org/x/tools v0.14.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 )
+
+require github.com/google/uuid v1.3.1
