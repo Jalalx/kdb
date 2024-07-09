@@ -7,4 +7,5 @@ type InputArgs struct {
 	Query   string
 	Stdin   bool
 	Top     int
+	Delete  string
 }

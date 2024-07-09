@@ -138,6 +138,25 @@ func (repo *EmbeddingDuckDbRepo) Query(vector []float64, top int) ([]EmbeddingQu
 	return items, nil
 }
 
+func (repo *EmbeddingDuckDbRepo) Delete(id uuid.UUID) (bool, error) {
+	query := "DELETE FROM embeddings WHERE id = ?"
+	result, err := repo.db.Exec(query, id)
+	if err != nil {
+		return false, err
+	}
+
+	affectedRows, err := result.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+
+	if affectedRows > 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
 func (repo *EmbeddingDuckDbRepo) Close() error {
 	return repo.db.Close()
 }

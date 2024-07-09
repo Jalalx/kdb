@@ -30,6 +30,8 @@ type EmbeddingRepo interface {
 
 	Insert(content string, embeddings []float64) (EmbeddingListItem, error)
 
+	Delete(id uuid.UUID) (bool, error)
+
 	List(limit int) ([]EmbeddingListItem, error)
 
 	Query(vector []float64, top int) ([]EmbeddingQueryItem, error)

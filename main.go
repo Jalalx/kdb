@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/google/uuid"
 	_ "github.com/marcboeker/go-duckdb"
 	"github.com/spf13/cobra"
 
@@ -75,6 +76,7 @@ func main() {
 	rootCmd.Flags().IntVarP(&args.List, "list", "l", 0, "List embedded texts")
 	rootCmd.Flags().IntVarP(&args.Top, "top", "t", 0, "Sets the max number of results to return for query")
 	rootCmd.Flags().BoolVarP(&args.Version, "version", "v", false, "Prints the version")
+	rootCmd.Flags().StringVarP(&args.Delete, "delete", "d", "", "Deletes an entry")
 
 	// Execute the command
 	if err := rootCmd.Execute(); err != nil {
@@ -130,6 +132,8 @@ func processInput(args *InputArgs, repo repos.EmbeddingRepo, llmProvider llms.Ll
 		performQuery(query, args.Top, repo, llmProvider)
 	} else if args.List > 0 {
 		performList(args.List, repo)
+	} else if args.Delete != "" {
+		performDelete(args.Delete, repo)
 	} else {
 		fmt.Println("No action specified.")
 	}
@@ -142,7 +146,7 @@ func performList(limit int, repo repos.EmbeddingRepo) {
 	}
 
 	for _, item := range items {
-		fmt.Printf("%s\t%s\t%s", item.Id, item.CreatedAt, item.Content)
+		fmt.Printf("%s\t%s\t%s\n", item.Id, item.CreatedAt, item.Content)
 	}
 }
 
@@ -174,4 +178,23 @@ func performInsert(content string, repo repos.EmbeddingRepo, llmProvider llms.Ll
 	}
 
 	fmt.Printf("Inserted item: %s\n", result.Id)
+}
+
+func performDelete(idStr string, repo repos.EmbeddingRepo) {
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	result, err := repo.Delete(id)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	if result {
+		fmt.Printf("Item deleted: %s\n", id)
+	} else {
+		fmt.Printf("Item not found: %s\n", id)
+	}
 }
