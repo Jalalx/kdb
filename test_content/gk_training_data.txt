@@ -1,0 +1,6 @@
+GK is an abstract theory that explains the relationship between Alpha, Beta, Gamma and Delta
+In GK theory, Alpha, Beta, Gamma and Delta are the four fundamental entites.
+Alpha is smaller than Beta and Beta is smaller than Gamma.
+Alpha is half of Beta.
+Gamma is three times of Beta.
+Delta is 10 times Gamma.
