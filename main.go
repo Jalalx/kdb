@@ -182,7 +182,7 @@ func performInsert(content string, repo repos.EmbeddingRepo, llmProvider llms.Ll
 		log.Fatalln(err)
 	}
 
-	fmt.Printf("Inserted item: %s\n", result.Id)
+	fmt.Printf("%s\n", result.Id)
 }
 
 func performDelete(idStr string, repo repos.EmbeddingRepo) {
