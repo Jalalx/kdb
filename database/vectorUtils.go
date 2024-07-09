@@ -1,4 +1,4 @@
-package main
+package database
 
 import "fmt"
 
@@ -15,5 +15,5 @@ func stringify(vector []float64) string {
 }
 
 func stringifyWithType(vector []float64) string {
-	return fmt.Sprintf("%s::FLOAT[%d]", stringify(vector), EMBEDDING_MODEL_DIMENSIONS)
+	return fmt.Sprintf("%s::FLOAT[%d]", stringify(vector), len(vector))
 }

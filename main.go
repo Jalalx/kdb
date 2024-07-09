@@ -10,6 +10,8 @@ import (
 
 	_ "github.com/marcboeker/go-duckdb"
 	"github.com/spf13/cobra"
+
+	"github.com/jalalx/kdb/database"
 )
 
 const (
@@ -39,7 +41,7 @@ func main() {
 	MakeKdbDirIfNeeded()
 
 	// Initialize the database
-	db, err := Connect()
+	db, err := database.Connect(DATABASE_VENDOR, DATABASE_NAME, EMBEDDING_MODEL_DIMENSIONS)
 	if err != nil {
 		panic(err)
 	}
@@ -112,17 +114,17 @@ func processInput(args *InputArgs, db *sql.DB) {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		InsertEmbedding(stdin, eb, db)
+		database.InsertEmbedding(stdin, eb, db)
 	} else if embed != "" {
 		eb, err := Embedd(embed, EMBEDDING_MODEL_NAME, db)
 		if err != nil {
 			log.Fatalln(err)
 		}
-		InsertEmbedding(embed, eb, db)
+		database.InsertEmbedding(embed, eb, db)
 	} else if query != "" {
 		Query(query, args.Top, db)
 	} else if args.List > 0 {
-		ListEmbeddings(args.List, db)
+		database.ListEmbeddings(args.List, db)
 	} else {
 		fmt.Println("No action specified.")
 	}

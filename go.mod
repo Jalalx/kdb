@@ -1,4 +1,4 @@
-module askduck
+module github.com/jalalx/kdb
 
 go 1.22.4
 
