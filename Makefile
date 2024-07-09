@@ -15,7 +15,7 @@ run:
 
 build:
 	mkdir -p bin/
-	cp -rf ask bin/ask
-	cp -rf learn bin/learn
-	cp -rf kdb-backup bin/kdb-backup
+	cp -rf scripts/ask bin/ask
+	cp -rf scripts/learn bin/learn
+	cp -rf scripts/kdb-backup bin/kdb-backup
 	go build $(LDFLAGS) -o bin/kdb
