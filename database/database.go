@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"database/sql"
@@ -8,17 +8,17 @@ import (
 	_ "github.com/marcboeker/go-duckdb"
 )
 
-func Connect() (*sql.DB, error) {
-	db, err := sql.Open(DATABASE_VENDOR, DATABASE_NAME)
+func Connect(vendor string, dbname string, dims int) (*sql.DB, error) {
+	db, err := sql.Open(vendor, dbname)
 	if err != nil {
 		return nil, err
 	}
 
-	initDb(db)
+	initDb(db, dims)
 	return db, nil
 }
 
-func initDb(db *sql.DB) {
+func initDb(db *sql.DB, dims int) {
 
 	batch := []string{
 		"SET autoinstall_known_extensions=true;",
@@ -29,7 +29,7 @@ func initDb(db *sql.DB) {
 		fmt.Sprintf(`CREATE TABLE IF NOT EXISTS embeddings (
 			content TEXT NOT NULL,
 			vector FLOAT[%d],
-			created_at TIMESTAMP DEFAULT current_timestamp);`, EMBEDDING_MODEL_DIMENSIONS),
+			created_at TIMESTAMP DEFAULT current_timestamp);`, dims),
 		"CREATE INDEX IF NOT EXISTS idx_hnsw_vector ON embeddings USING HNSW (vector);",
 	}
 

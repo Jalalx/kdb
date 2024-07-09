@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 
+	"github.com/jalalx/kdb/database"
 	ollamaclient "github.com/xyproto/ollamaclient"
 )
 
@@ -38,5 +39,5 @@ func Query(query string, top int, db *sql.DB) {
 		log.Fatalln(err)
 	}
 
-	FindNearestEmbeddings(embeddings, top, db)
+	database.FindNearestEmbeddings(embeddings, top, db)
 }
