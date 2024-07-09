@@ -76,7 +76,7 @@ func main() {
 	rootCmd.Flags().IntVarP(&args.List, "list", "l", 0, "List embedded texts")
 	rootCmd.Flags().IntVarP(&args.Top, "top", "t", 0, "Sets the max number of results to return for query")
 	rootCmd.Flags().BoolVarP(&args.Version, "version", "v", false, "Prints the version")
-	rootCmd.Flags().StringVarP(&args.Delete, "delete", "d", "", "Deletes an entry")
+	rootCmd.Flags().StringVarP(&args.Delete, "delete", "d", "", "Deletes an entry by given uuid")
 
 	// Execute the command
 	if err := rootCmd.Execute(); err != nil {

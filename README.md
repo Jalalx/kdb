@@ -47,3 +47,9 @@ You can do this by using `--list` parameter and entering the max number of entri
 ```
 ./kdb --list 100
 ```
+
+# How delete an entry?
+You can simply use the `--delete` option:
+```
+./kdb --delete "b1827d5a-16d2-4f74-acfa-29864434859a"
+```
