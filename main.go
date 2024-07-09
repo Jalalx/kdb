@@ -10,6 +10,7 @@ import (
 	_ "github.com/marcboeker/go-duckdb"
 	"github.com/spf13/cobra"
 
+	"github.com/jalalx/kdb/llms"
 	"github.com/jalalx/kdb/repos"
 )
 
@@ -44,6 +45,11 @@ func main() {
 
 	defer repo.Close()
 
+	llmProvider, err := llms.NewLlmProvider()
+	if err != nil {
+		panic(err)
+	}
+
 	err = repo.Connect()
 	if err != nil {
 		panic(err)
@@ -59,7 +65,7 @@ func main() {
 		Use:   "kdb",
 		Short: "A knowledge database available as a command line tool",
 		Run: func(cmd *cobra.Command, _ []string) {
-			processInput(&args, repo)
+			processInput(&args, repo, llmProvider)
 		},
 	}
 
@@ -77,7 +83,7 @@ func main() {
 	}
 }
 
-func processInput(args *InputArgs, repo repos.EmbeddingRepo) {
+func processInput(args *InputArgs, repo repos.EmbeddingRepo, llmProvider llms.LlmProvider) {
 
 	if args.Version {
 		fmt.Printf("Version: %s-%s\n", Version, GitHash)
@@ -117,11 +123,11 @@ func processInput(args *InputArgs, repo repos.EmbeddingRepo) {
 
 	if args.Stdin {
 		content := strings.TrimSpace(readStdInput())
-		performInsert(content, repo)
+		performInsert(content, repo, llmProvider)
 	} else if embed != "" {
-		performInsert(embed, repo)
+		performInsert(embed, repo, llmProvider)
 	} else if query != "" {
-		performQuery(query, args.Top, repo)
+		performQuery(query, args.Top, repo, llmProvider)
 	} else if args.List > 0 {
 		performList(args.List, repo)
 	} else {
@@ -140,8 +146,8 @@ func performList(limit int, repo repos.EmbeddingRepo) {
 	}
 }
 
-func performQuery(query string, top int, repo repos.EmbeddingRepo) {
-	eb, err := Embedd(query, EMBEDDING_MODEL_NAME)
+func performQuery(query string, top int, repo repos.EmbeddingRepo, llmProvider llms.LlmProvider) {
+	eb, err := llmProvider.GetEmbedding(query, EMBEDDING_MODEL_NAME)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -156,8 +162,8 @@ func performQuery(query string, top int, repo repos.EmbeddingRepo) {
 	}
 }
 
-func performInsert(content string, repo repos.EmbeddingRepo) {
-	eb, err := Embedd(content, EMBEDDING_MODEL_NAME)
+func performInsert(content string, repo repos.EmbeddingRepo, llmProvider llms.LlmProvider) {
+	eb, err := llmProvider.GetEmbedding(content, EMBEDDING_MODEL_NAME)
 	if err != nil {
 		log.Fatalln(err)
 	}
