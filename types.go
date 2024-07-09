@@ -8,4 +8,5 @@ type InputArgs struct {
 	Stdin   bool
 	Top     int
 	Delete  string
+	Id      bool
 }

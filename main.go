@@ -70,6 +70,7 @@ func main() {
 		},
 	}
 
+	rootCmd.Flags().BoolVarP(&args.Id, "id", "i", false, "Will make the id of the entry visible in queries")
 	rootCmd.Flags().BoolVarP(&args.Stdin, "stdin", "s", false, "Read from stdin")
 	rootCmd.Flags().StringVarP(&args.Query, "query", "q", "", "Search query")
 	rootCmd.Flags().StringVarP(&args.Embed, "embed", "e", "", "Text to embed")
@@ -129,7 +130,7 @@ func processInput(args *InputArgs, repo repos.EmbeddingRepo, llmProvider llms.Ll
 	} else if embed != "" {
 		performInsert(embed, repo, llmProvider)
 	} else if query != "" {
-		performQuery(query, args.Top, repo, llmProvider)
+		performQuery(query, args.Top, args.Id, repo, llmProvider)
 	} else if args.List > 0 {
 		performList(args.List, repo)
 	} else if args.Delete != "" {
@@ -150,7 +151,7 @@ func performList(limit int, repo repos.EmbeddingRepo) {
 	}
 }
 
-func performQuery(query string, top int, repo repos.EmbeddingRepo, llmProvider llms.LlmProvider) {
+func performQuery(query string, top int, showIds bool, repo repos.EmbeddingRepo, llmProvider llms.LlmProvider) {
 	vector, err := llmProvider.GetEmbedding(query, EMBEDDING_MODEL_NAME)
 	if err != nil {
 		log.Fatalln(err)
@@ -162,7 +163,11 @@ func performQuery(query string, top int, repo repos.EmbeddingRepo, llmProvider l
 	}
 
 	for _, item := range items {
-		fmt.Println(item.Content)
+		if showIds {
+			fmt.Printf("%s\t%s\n", item.Id, item.Content)
+		} else {
+			fmt.Println(item.Content)
+		}
 	}
 }
 

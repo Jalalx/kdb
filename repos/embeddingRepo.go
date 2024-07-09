@@ -13,7 +13,7 @@ type EmbeddingListItem struct {
 }
 
 type EmbeddingQueryItem struct {
-	Id        string
+	Id        uuid.UUID
 	Content   string
 	Distance  float64
 	CreatedAt time.Time
