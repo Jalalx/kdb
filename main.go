@@ -147,12 +147,12 @@ func performList(limit int, repo repos.EmbeddingRepo) {
 }
 
 func performQuery(query string, top int, repo repos.EmbeddingRepo, llmProvider llms.LlmProvider) {
-	eb, err := llmProvider.GetEmbedding(query, EMBEDDING_MODEL_NAME)
+	vector, err := llmProvider.GetEmbedding(query, EMBEDDING_MODEL_NAME)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	items, err := repo.Query(eb, top)
+	items, err := repo.Query(vector, top)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -163,12 +163,12 @@ func performQuery(query string, top int, repo repos.EmbeddingRepo, llmProvider l
 }
 
 func performInsert(content string, repo repos.EmbeddingRepo, llmProvider llms.LlmProvider) {
-	eb, err := llmProvider.GetEmbedding(content, EMBEDDING_MODEL_NAME)
+	vector, err := llmProvider.GetEmbedding(content, EMBEDDING_MODEL_NAME)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	result, err := repo.Insert(content, eb)
+	result, err := repo.Insert(content, vector)
 	if err != nil {
 		log.Fatalln(err)
 	}
