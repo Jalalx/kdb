@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"text/tabwriter"
 
 	"github.com/google/uuid"
 	_ "github.com/marcboeker/go-duckdb"
@@ -146,9 +147,15 @@ func performList(limit int, repo repos.EmbeddingRepo) {
 		log.Fatalln(err)
 	}
 
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintln(w, "Id\tCreated At\tContent\t")
+	fmt.Fprintln(w, "--\t----------\t-------\t")
 	for _, item := range items {
-		fmt.Printf("%s\t%s\t%s\n", item.Id, item.CreatedAt, item.Content)
+		row := fmt.Sprintf("%s\t%s\t%s\n", item.Id, item.CreatedAt, item.Content)
+		fmt.Fprint(w, row)
 	}
+
+	w.Flush()
 }
 
 func performQuery(query string, top int, showIds bool, repo repos.EmbeddingRepo, llmProvider llms.LlmProvider) {
