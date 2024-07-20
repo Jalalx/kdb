@@ -1,4 +1,4 @@
-# A knowledge database in command line
+# A knowledge database in your command line
 `kdb` is a knowledgebase command line tool. You can use it as is or integrate it with 3rd party tools to make your own Retrieval Augmented Generation (RAG) system.
 
 ## How to query information?
