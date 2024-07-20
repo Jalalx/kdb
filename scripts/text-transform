@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Check if a input text is provided as an argument
+if [ $# -eq 0 ]; then
+    echo "Usage: text-transform '<content>'"
+    exit 1
+fi
+
+# Language model to be used for content transformation
+MODEL="${KDB_INFERENCE_MODEL:-llama3}"
+
+# The content passed as an argument
+CONTENT="$1"
+
+# The given prompt
+PROMPT="
+Instructions:
+
+	1.	Segmentation: Divide the text into logically coherent sections. Each section should encapsulate a specific topic, idea, or argument.
+	2.	Transformation: Provide a brief summary or key points for each segmented part to capture the essence of the content.
+	3.	Labeling: Label each segment with a descriptive title that reflects its main idea or topic.
+	4.	Formatting: Present each segment in plain text format with its title followed by the detailed content, and then provide the summary/key points for easy reference.
+    5.  Answer with the result only. Do not start the answer with intros or irrelevant sentences.
+
+Text to Segment and Transform:
+"
+# Combine the prompt and the user content
+combined_input="${PROMPT}${CONTENT}"
+
+# Forward the combined input to ollama
+echo "$combined_input" | ollama run $MODEL
+
