@@ -54,7 +54,7 @@ kdb query "find something"
 The output can be piped to ollama to get the result in a proper format. Take a look at the scripts in the `scripts/` directory.
 
 ## ask
-You can quicly use your knowledge base by running `ask "some question"`
+You can use your knowledge base by simply running: `ask "some question"`
 
 ## learn
 A quick way to embed some content for later retrival is using the `learn` script like this: `learn "something"`
