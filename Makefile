@@ -9,6 +9,7 @@ clean:
 	rm -f bin/kdb
 	rm -f bin/ask
 	rm -f bin/learn
+	rm -f bin/batch-learn
 	rm -f bin/kdb-backup
 	rm -f bin/text-transform
 
@@ -19,6 +20,7 @@ build:
 	mkdir -p bin/
 	cp -rf scripts/ask bin/ask
 	cp -rf scripts/learn bin/learn
+	cp -rf scripts/batch-learn bin/batch-learn
 	cp -rf scripts/kdb-backup bin/kdb-backup
 	cp -rf scripts/text-transform bin/text-transform
 	go build $(LDFLAGS) -o bin/kdb
@@ -27,6 +29,7 @@ scripts:
 	mkdir -p bin/
 	cp -rf scripts/ask bin/ask
 	cp -rf scripts/learn bin/learn
+	cp -rf scripts/batch-learn bin/batch-learn
 	cp -rf scripts/kdb-backup bin/kdb-backup
 	cp -rf scripts/text-transform bin/text-transform
 

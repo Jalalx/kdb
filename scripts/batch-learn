@@ -1,0 +1,56 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 <directory_path> [file_pattern]"
+    exit 1
+fi
+
+dir_path="$1"
+file_pattern="$2"
+
+if [ ! -d "$dir_path" ]; then
+    echo "Error: '$dir_path' is not a directory"
+    exit 1
+fi
+
+is_text_file() {
+    file --mime-type "$1" | grep -q "text/"
+}
+
+matches_pattern() {
+    local filename=$(basename "$1")
+    if [ -z "$file_pattern" ]; then
+        return 0
+    else
+        shopt -s nocasematch
+        if [[ "$filename" == $file_pattern ]]; then
+            return 0
+        else
+            return 1
+        fi
+    fi
+}
+
+process_files() {
+    local current_dir="$1"
+    
+    for item in "$current_dir"/*; do
+        if [ -f "$item" ]; then
+            if matches_pattern "$item" && is_text_file "$item"; then
+                kdb_embed "$item"
+            else
+                echo "Skipping file: $item"
+            fi
+        elif [ -d "$item" ]; then
+            # If it's a directory, recurse into it
+            process_files "$item"
+        fi
+    done
+}
+
+kdb_embed() {
+    echo "Processing file: $1"
+    cat "$1" | kdb embed --stdin
+}
+
+process_files "$dir_path"
