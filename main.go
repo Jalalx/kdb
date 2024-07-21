@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	"log"
+	"os"
+	"path/filepath"
 
 	_ "github.com/marcboeker/go-duckdb"
 	"github.com/spf13/cobra"
@@ -50,4 +53,19 @@ func main() {
 
 	rootCmd := cmd.NewCLI(repo, llmProvider, EMBEDDING_MODEL_NAME, Version, GitHash)
 	cobra.CheckErr(rootCmd.ExecuteContext(context.Background()))
+}
+
+func MakeKdbDirIfNeeded() {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	kdbDir := filepath.Join(homeDir, ".kdb")
+
+	if _, err := os.Stat(kdbDir); os.IsNotExist(err) {
+		if err := os.Mkdir(kdbDir, 0755); err != nil {
+			log.Fatal(err)
+		}
+	}
 }
