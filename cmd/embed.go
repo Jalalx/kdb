@@ -13,8 +13,7 @@ import (
 
 func embedCommand(
 	repo repos.EmbeddingRepo,
-	llmProvider llms.LlmProvider,
-	modelName string) *cobra.Command {
+	llmProvider llms.LlmProvider) *cobra.Command {
 
 	var content string
 	var silent bool
@@ -45,7 +44,7 @@ func embedCommand(
 				content = args[0]
 			}
 
-			embedHandler(repo, llmProvider, content, silent, modelName)
+			embedHandler(repo, llmProvider, content, silent)
 		},
 		Aliases: []string{"save"},
 	}
@@ -59,10 +58,9 @@ func embedHandler(
 	repo repos.EmbeddingRepo,
 	llmProvider llms.LlmProvider,
 	content string,
-	silent bool,
-	modelName string) error {
+	silent bool) error {
 
-	vector, err := llmProvider.GetEmbedding(content, modelName)
+	vector, err := llmProvider.GetEmbedding(content)
 	if err != nil {
 		return err
 	}

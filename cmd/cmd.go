@@ -11,7 +11,6 @@ import (
 func NewCLI(
 	repo repos.EmbeddingRepo,
 	llmProvider llms.LlmProvider,
-	embeddingModelName string,
 	version string,
 	githash string) *cobra.Command {
 	cobra.EnableCommandSorting = false
@@ -37,8 +36,8 @@ func NewCLI(
 	rootCmd.Flags().BoolP("version", "v", false, "Show version information")
 
 	rootCmd.AddCommand(listCommand(repo))
-	rootCmd.AddCommand(queryCommand(repo, llmProvider, embeddingModelName))
-	rootCmd.AddCommand(embedCommand(repo, llmProvider, embeddingModelName))
+	rootCmd.AddCommand(queryCommand(repo, llmProvider))
+	rootCmd.AddCommand(embedCommand(repo, llmProvider))
 	rootCmd.AddCommand(deleteCommand(repo))
 	return rootCmd
 }

@@ -27,9 +27,10 @@ require (
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 )
 
-require github.com/google/uuid v1.3.1
-
 require (
-	github.com/mattn/go-runewidth v0.0.9 // indirect
-	github.com/olekukonko/tablewriter v0.0.5 // indirect
+	github.com/google/uuid v1.3.1
+	github.com/olekukonko/tablewriter v0.0.5
+	gopkg.in/yaml.v3 v3.0.1
 )
+
+require github.com/mattn/go-runewidth v0.0.9 // indirect

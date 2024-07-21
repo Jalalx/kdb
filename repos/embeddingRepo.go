@@ -1,9 +1,12 @@
 package repos
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jalalx/kdb/config"
 )
 
 type EmbeddingListItem struct {
@@ -19,8 +22,12 @@ type EmbeddingQueryItem struct {
 	CreatedAt time.Time
 }
 
-func NewRepository() (EmbeddingRepo, error) {
-	return NewDuckDbEmbeddingRepo(), nil
+func NewRepository(cfg *config.KdbStorageConfig) (EmbeddingRepo, error) {
+	if strings.ToLower(cfg.Provider) == "duckdb" {
+		return NewDuckDbEmbeddingRepo(), nil
+	}
+
+	return nil, fmt.Errorf("database provider not supported: %s", cfg.Provider)
 }
 
 type EmbeddingRepo interface {

@@ -10,8 +10,7 @@ import (
 
 func queryCommand(
 	repo repos.EmbeddingRepo,
-	llmProvider llms.LlmProvider,
-	modelName string) *cobra.Command {
+	llmProvider llms.LlmProvider) *cobra.Command {
 
 	var limit int
 	var showIdentifiers bool
@@ -22,7 +21,7 @@ func queryCommand(
 		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			queryText := args[0]
-			queryHandler(repo, llmProvider, queryText, limit, showIdentifiers, modelName)
+			queryHandler(repo, llmProvider, queryText, limit, showIdentifiers)
 		},
 	}
 	command.Flags().IntVar(&limit, "limit", 5, "Number of entries to be returned.")
@@ -36,10 +35,9 @@ func queryHandler(
 	llmProvider llms.LlmProvider,
 	query string,
 	limit int,
-	showIdentifiers bool,
-	modelName string) error {
+	showIdentifiers bool) error {
 
-	vector, err := llmProvider.GetEmbedding(query, modelName)
+	vector, err := llmProvider.GetEmbedding(query)
 	if err != nil {
 		return err
 	}

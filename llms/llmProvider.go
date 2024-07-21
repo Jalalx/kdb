@@ -1,9 +1,11 @@
 package llms
 
+import "github.com/jalalx/kdb/config"
+
 type LlmProvider interface {
-	GetEmbedding(prompt string, model string) ([]float64, error)
+	GetEmbedding(prompt string) ([]float64, error)
 }
 
-func NewLlmProvider() (LlmProvider, error) {
-	return NewOllamaLlmProvider(), nil
+func NewLlmProvider(cfg *config.KdbEmbeddingConfig) (LlmProvider, error) {
+	return NewOllamaLlmProvider(cfg)
 }
