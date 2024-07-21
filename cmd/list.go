@@ -5,10 +5,10 @@ import (
 	"log"
 	"math"
 	"os"
-	"text/tabwriter"
 	"time"
 
 	"github.com/jalalx/kdb/repos"
+	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 )
 
@@ -39,20 +39,18 @@ func listHandler(
 		log.Fatalln(err)
 	}
 
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(w, "Id\tCreated At\tContent\t")
-	fmt.Fprintln(w, "--\t----------\t-------\t")
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Id", "Created At", "Content"})
+	table.SetColMinWidth(2 /*Content Column Index*/, 50)
 	for _, item := range items {
 		dateStr := humanReadableTime(item.CreatedAt)
 		if useUtcDate {
 			dateStr = item.CreatedAt.String()
 		}
-		row := fmt.Sprintf("%s\t%s\t%s", item.Id, dateStr, item.Content)
-		fmt.Fprint(w, row)
+
+		table.Append([]string{item.Id.String(), dateStr, item.Content})
 	}
-
-	w.Flush()
-
+	table.Render()
 	// No errors
 	return nil
 }
