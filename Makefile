@@ -1,5 +1,5 @@
 GIT_HASH=$(shell git rev-parse --short HEAD)
-VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+VERSION=$(shell git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
 # Build flags
 LDFLAGS=-ldflags "-X main.Version=$(VERSION) -X main.GitHash=$(GIT_HASH)"
 
