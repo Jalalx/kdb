@@ -33,14 +33,7 @@ func main() {
 		panic(err)
 	}
 
-	defer repo.Close()
-
 	llmProvider, err := llms.NewLlmProvider(&cfg.Embedding)
-	if err != nil {
-		panic(err)
-	}
-
-	err = repo.Connect()
 	if err != nil {
 		panic(err)
 	}

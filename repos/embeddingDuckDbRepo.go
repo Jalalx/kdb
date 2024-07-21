@@ -4,32 +4,31 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jalalx/kdb/config"
 )
 
-const (
-	DUCKDB_PROVIDER = "duckdb"
-	DUCKDB_PATH     = "~/.kdb/knowledgebase.ddb"
-)
-
-func NewDuckDbEmbeddingRepo() *EmbeddingDuckDbRepo {
-	return &EmbeddingDuckDbRepo{}
+func NewDuckDbEmbeddingRepo(cfg *config.KdbStorageConfig) *EmbeddingDuckDbRepo {
+	return &EmbeddingDuckDbRepo{
+		cfg: cfg,
+	}
 }
 
 type EmbeddingDuckDbRepo struct {
-	db *sql.DB
+	cfg *config.KdbStorageConfig
 }
 
-func (repo *EmbeddingDuckDbRepo) Connect() error {
-	db, err := sql.Open(DUCKDB_PROVIDER, DUCKDB_PATH)
+func (repo *EmbeddingDuckDbRepo) connect() (*sql.DB, error) {
+	providerName := strings.ToLower(repo.cfg.Provider)
+	db, err := sql.Open(providerName, repo.cfg.URL)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	repo.db = db
-	return nil
+	return db, nil
 }
 
 func (repo *EmbeddingDuckDbRepo) Init(dims int) error {
@@ -47,8 +46,14 @@ func (repo *EmbeddingDuckDbRepo) Init(dims int) error {
 		"CREATE INDEX IF NOT EXISTS idx_hnsw_vector ON embeddings USING HNSW (vector);",
 	}
 
+	db, err := repo.connect()
+	if err != nil {
+		panic(err)
+	}
+
+	defer db.Close()
 	for _, sql := range batch {
-		_, err := repo.db.Exec(sql)
+		_, err := db.Exec(sql)
 		if err != nil {
 			return err
 		}
@@ -58,8 +63,16 @@ func (repo *EmbeddingDuckDbRepo) Init(dims int) error {
 }
 
 func (repo *EmbeddingDuckDbRepo) Insert(content string, embeddings []float64) (EmbeddingListItem, error) {
+
+	db, err := repo.connect()
+	if err != nil {
+		panic(err)
+	}
+
+	defer db.Close()
+
 	// Prepare the SQL statement
-	stmt, err := repo.db.Prepare("INSERT INTO embeddings(id, content, vector, created_at) VALUES (?, ?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO embeddings(id, content, vector, created_at) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -85,8 +98,15 @@ func (repo *EmbeddingDuckDbRepo) Insert(content string, embeddings []float64) (E
 func (repo *EmbeddingDuckDbRepo) List(limit int) ([]EmbeddingListItem, error) {
 	items := []EmbeddingListItem{}
 
+	db, err := repo.connect()
+	if err != nil {
+		panic(err)
+	}
+
+	defer db.Close()
+
 	query := "SELECT id, content, created_at FROM embeddings ORDER BY created_at DESC limit ?"
-	rows, err := repo.db.Query(query, limit)
+	rows, err := db.Query(query, limit)
 
 	if err != nil {
 		return nil, err
@@ -111,11 +131,18 @@ func (repo *EmbeddingDuckDbRepo) List(limit int) ([]EmbeddingListItem, error) {
 func (repo *EmbeddingDuckDbRepo) Query(vector []float64, top int) ([]EmbeddingQueryItem, error) {
 	items := []EmbeddingQueryItem{}
 
+	db, err := repo.connect()
+	if err != nil {
+		panic(err)
+	}
+
+	defer db.Close()
+
 	// TODO: Use prepared statement when the support for arrays were added to duckdb
 	query := fmt.Sprintf(
 		"SELECT id, content, array_distance(vector, %s) as distance, created_at FROM embeddings ORDER BY distance LIMIT ?",
 		stringifyWithType(vector))
-	rows, err := repo.db.Query(query, top)
+	rows, err := db.Query(query, top)
 
 	if err != nil {
 		return nil, err
@@ -139,8 +166,16 @@ func (repo *EmbeddingDuckDbRepo) Query(vector []float64, top int) ([]EmbeddingQu
 }
 
 func (repo *EmbeddingDuckDbRepo) Delete(id uuid.UUID) (bool, error) {
+
+	db, err := repo.connect()
+	if err != nil {
+		panic(err)
+	}
+
+	defer db.Close()
+
 	query := "DELETE FROM embeddings WHERE id = ?"
-	result, err := repo.db.Exec(query, id)
+	result, err := db.Exec(query, id)
 	if err != nil {
 		return false, err
 	}
@@ -155,8 +190,4 @@ func (repo *EmbeddingDuckDbRepo) Delete(id uuid.UUID) (bool, error) {
 	}
 
 	return false, nil
-}
-
-func (repo *EmbeddingDuckDbRepo) Close() error {
-	return repo.db.Close()
 }

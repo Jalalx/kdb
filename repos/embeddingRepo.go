@@ -24,15 +24,13 @@ type EmbeddingQueryItem struct {
 
 func NewRepository(cfg *config.KdbStorageConfig) (EmbeddingRepo, error) {
 	if strings.ToLower(cfg.Provider) == "duckdb" {
-		return NewDuckDbEmbeddingRepo(), nil
+		return NewDuckDbEmbeddingRepo(cfg), nil
 	}
 
 	return nil, fmt.Errorf("database provider not supported: %s", cfg.Provider)
 }
 
 type EmbeddingRepo interface {
-	Connect() error
-
 	Init(dims int) error
 
 	Insert(content string, embeddings []float64) (EmbeddingListItem, error)
@@ -42,6 +40,4 @@ type EmbeddingRepo interface {
 	List(limit int) ([]EmbeddingListItem, error)
 
 	Query(vector []float64, top int) ([]EmbeddingQueryItem, error)
-
-	Close() error
 }
