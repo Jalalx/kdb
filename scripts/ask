@@ -19,7 +19,7 @@ TOP_ANSWERS=3
 PROMPT="Use the given context to answer the question. Don't do yapping. Also don't mention that you answer using the given context. If you don't know the answer according to the context, just say you don't know the answer. Do not make up answers. Context:\n"
 
 # Get the context from the kdb command-line app
-CONTEXT=$(kdb --query "$QUESTION" --top $TOP_ANSWERS)
+CONTEXT=$(kdb query "$QUESTION" --limit $TOP_ANSWERS)
 
 # Combine the prompt, context, and the question
 combined_input="${PROMPT}${CONTEXT}\n\nQuestion: ${QUESTION}"

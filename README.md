@@ -4,7 +4,7 @@
 ## How to query information?
 Simply use the `query` parameter to retrieve relevant informations. You can use the `--limit` parameter to indicate how many of most relevant entries you want to retrieve.
 ```
-./kdb query "What is life meaning?" --limit 1
+./kdb query "What is the meaning of life?" --limit 1
 ```
 as you can see it doesn't return anything, because it doesn't have any knowledge yet.
 
@@ -12,7 +12,7 @@ as you can see it doesn't return anything, because it doesn't have any knowledge
 ## How to add knowledge?
 You can use the `embed` paramter to pass a piece of knowledge to the database.
 ```
-./kdb embed "Here is a sample piece of information that will be remembed forever!"
+./kdb embed "Here is a sample piece of information to be remembered!"
 ```
 There is a script in the `test_content` directory which you can use to add some sample knowledge.
 ```
