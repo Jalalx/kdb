@@ -17,6 +17,11 @@ const (
 	EMBEDDING_MODEL_DIMENSIONS = 768
 )
 
+var (
+	Version string
+	GitHash string
+)
+
 func main() {
 	MakeKdbDirIfNeeded()
 
@@ -43,6 +48,6 @@ func main() {
 		panic(err)
 	}
 
-	rootCmd := cmd.NewCLI(repo, llmProvider, EMBEDDING_MODEL_NAME)
+	rootCmd := cmd.NewCLI(repo, llmProvider, EMBEDDING_MODEL_NAME, Version, GitHash)
 	cobra.CheckErr(rootCmd.ExecuteContext(context.Background()))
 }

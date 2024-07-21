@@ -8,12 +8,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	Version string
-	GitHash string
-)
-
-func NewCLI(repo repos.EmbeddingRepo, llmProvider llms.LlmProvider, embeddingModelName string) *cobra.Command {
+func NewCLI(
+	repo repos.EmbeddingRepo,
+	llmProvider llms.LlmProvider,
+	embeddingModelName string,
+	version string,
+	githash string) *cobra.Command {
 	cobra.EnableCommandSorting = false
 
 	var rootCmd = &cobra.Command{
@@ -25,8 +25,8 @@ func NewCLI(repo repos.EmbeddingRepo, llmProvider llms.LlmProvider, embeddingMod
 			DisableDefaultCmd: true,
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			if version, _ := cmd.Flags().GetBool("version"); version {
-				versionHandler(cmd, args)
+			if v, _ := cmd.Flags().GetBool("version"); v {
+				versionHandler(version, githash)
 				return
 			}
 
@@ -43,6 +43,6 @@ func NewCLI(repo repos.EmbeddingRepo, llmProvider llms.LlmProvider, embeddingMod
 	return rootCmd
 }
 
-func versionHandler(_ *cobra.Command, _ []string) {
-	fmt.Printf("Version: %s-%s\n", Version, GitHash)
+func versionHandler(version string, githash string) {
+	fmt.Printf("Version: %s-%s\n", version, githash)
 }

@@ -1,7 +1,7 @@
 GIT_HASH=$(shell git rev-parse --short HEAD)
 VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
 # Build flags
-LDFLAGS=-ldflags "-X cmd.Version=$(VERSION) -X cmd.GitHash=$(GIT_HASH)"
+LDFLAGS=-ldflags "-X main.Version=$(VERSION) -X main.GitHash=$(GIT_HASH)"
 
 .PHONY: clean build run scripts
 
