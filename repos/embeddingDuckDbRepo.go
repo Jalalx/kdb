@@ -28,16 +28,17 @@ func (repo *EmbeddingDuckDbRepo) connect() (*sql.DB, error) {
 		return nil, err
 	}
 
+	db.Exec("SET autoinstall_known_extensions=true;")
+	db.Exec("SET autoload_known_extensions=true;")
+	db.Exec("INSTALL vss")
+	db.Exec("LOAD vss")
+	db.Exec("SET hnsw_enable_experimental_persistence=true;")
+
 	return db, nil
 }
 
 func (repo *EmbeddingDuckDbRepo) Init(dims int) error {
 	batch := []string{
-		"SET autoinstall_known_extensions=true;",
-		"SET autoload_known_extensions=true;",
-		"INSTALL vss",
-		"LOAD vss",
-		"SET hnsw_enable_experimental_persistence=true;",
 		fmt.Sprintf(`CREATE TABLE IF NOT EXISTS embeddings (
 			id uuid DEFAULT gen_random_uuid(),
 			content TEXT NOT NULL,
